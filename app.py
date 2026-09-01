@@ -53,32 +53,97 @@ st.markdown(f"<div style='text-align:right; color:gray;'>👁️ Day Visits: {vi
 st.markdown(f"<div style='text-align:right; color:gray;'>📥 Day Downloads: {download_total}</div>", unsafe_allow_html=True)
 
 # ====================== LOAD & DECRYPT EXCEL ======================
-buffer_size = 64 * 1024
-password = st.secrets["excel_password"]
-encrypted_url = "https://raw.githubusercontent.com/eraghu21/STTPAUG31-SEP04-Intelligent-Vision-Systems-/main/registrations.xlsx.aes"
 
-enc_file = "registrations.xlsx.aes"
-dec_file = "registrations.xlsx"
+buffer_size = 64 * 1024
 
 try:
-    resp = requests.get(encrypted_url)
-    if resp.status_code != 200 or len(resp.content) == 0:
-        st.error("❌ Failed to download encrypted Excel file from GitHub.")
+    # Get password from Streamlit secrets
+    password = st.secrets["excel_password"]
+
+    encrypted_url = (
+        "https://raw.githubusercontent.com/"
+        "eraghu21/STTPAUG31-SEP04-Intelligent-Vision-Systems-/"
+        "main/registrations.xlsx.aes"
+    )
+
+    enc_file = "registrations.xlsx.aes"
+    dec_file = "registrations.xlsx"
+
+    # ------------------------------------------------
+    # STEP 1: Download encrypted Excel
+    # ------------------------------------------------
+    resp = requests.get(encrypted_url, timeout=30)
+
+    st.write("Download status:", resp.status_code)
+    st.write("Downloaded bytes:", len(resp.content))
+
+    if resp.status_code != 200:
+        st.error(
+            f"❌ GitHub download failed. HTTP Status: {resp.status_code}"
+        )
+        st.stop()
+
+    if len(resp.content) == 0:
+        st.error("❌ Downloaded encrypted file is empty.")
         st.stop()
 
     with open(enc_file, "wb") as f:
         f.write(resp.content)
 
-    pyAesCrypt.decryptFile(enc_file, dec_file, password, buffer_size)
+    # ------------------------------------------------
+    # STEP 2: Decrypt AES file
+    # ------------------------------------------------
+    pyAesCrypt.decryptFile(
+        enc_file,
+        dec_file,
+        password,
+        buffer_size
+    )
+
+    st.success("✅ Excel file decrypted successfully.")
+
+    # ------------------------------------------------
+    # STEP 3: Read Excel
+    # ------------------------------------------------
     df = pd.read_excel(dec_file)
 
-    os.remove(enc_file)
-    os.remove(dec_file)
+    st.success(f"✅ Participant data loaded: {len(df)} records")
 
-except Exception as e:
-    st.error("❌ Error loading participant data. Please try again later.")
+    # ------------------------------------------------
+    # STEP 4: Clean up temporary files
+    # ------------------------------------------------
+    if os.path.exists(enc_file):
+        os.remove(enc_file)
+
+    if os.path.exists(dec_file):
+        os.remove(dec_file)
+
+except KeyError:
+    st.error(
+        "❌ 'excel_password' is missing from Streamlit Secrets."
+    )
+    st.info(
+        "Add excel_password to Streamlit Cloud → Settings → Secrets."
+    )
     st.stop()
 
+except pyAesCrypt.AESDecryptionError:
+    st.error(
+        "❌ AES decryption failed."
+    )
+    st.info(
+        "Check whether the excel_password in Streamlit Secrets "
+        "matches the password used to encrypt registrations.xlsx.aes."
+    )
+    st.stop()
+
+except Exception as e:
+    st.error(
+        f"❌ Error loading participant data: "
+        f"{type(e).__name__}"
+    )
+    st.error(f"Details: {str(e)}")
+    st.stop()
 # ====================== CLEAN COLUMN NAMES ======================
 df.columns = df.columns.str.strip().str.lower()
 # ====================== EMBEDDED CERTIFICATE BACKGROUND ======================
