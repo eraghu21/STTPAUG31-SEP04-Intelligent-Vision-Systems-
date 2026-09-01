@@ -106,7 +106,7 @@ try:
     # STEP 3: Read Excel
     # ------------------------------------------------
     df = pd.read_excel(dec_file)
-
+    st.write("Excel columns:", df.columns.tolist())
     st.success(f"✅ Participant data loaded: {len(df)} records")
 
     # ------------------------------------------------
@@ -169,7 +169,7 @@ if st.button("Generate Certificate"):
     if not is_valid_email(email_input):
         st.warning("⚠️ Please enter a valid email address.")
     else:
-        match = df[df['email'].str.strip().str.lower() == email_input.strip().lower()]
+        match = df['email'].astype(str).str.strip().str.lower()
         if not match.empty:
             row = match.iloc[0]
             attendance = row['attendance']
