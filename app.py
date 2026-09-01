@@ -127,6 +127,7 @@ if st.button("Generate Certificate"):
                 pdf.add_page()
                 pdf.image(bg_image_path, x=0, y=0, w=297, h=210)
                 pdf.add_font("AlexBrush", "", "AlexBrush-Regular.ttf", uni=True)
+                pdf.add_font("CakeSans", "", "CakeSans-Bold.ttf", uni=True)
 
                 pdf.ln(72)
 
@@ -134,12 +135,12 @@ if st.button("Generate Certificate"):
                 full_text = f"{name.strip().title()} - {designation.strip().title()}"
 
                 # Use a single font size for proper centering
-                pdf.set_font("AlexBrush", '', 28)
+                pdf.set_font("CakeSans", '', 28)
                 pdf.set_text_color(212, 175, 55)
                 pdf.cell(0, 8, txt=full_text, ln=True, align='C')
 
-                pdf.ln(2)
-                pdf.set_font("AlexBrush", size=22)
+                pdf.ln(4)
+                pdf.set_font("CakeSans", size=23)
                 pdf.set_text_color(112, 15, 55)
                 pdf.cell(0, 7, txt=college.strip().title(), ln=True, align='C')
 
