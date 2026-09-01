@@ -106,7 +106,11 @@ try:
     # STEP 3: Read Excel
     # ------------------------------------------------
     df = pd.read_excel(dec_file)
-    st.write("Excel columns:", df.columns.tolist())
+    st.write("COLUMN NAMES:")
+    st.write(df.columns.tolist())
+
+    st.write("FIRST 5 ROWS:")
+    st.dataframe(df.head())
     st.success(f"✅ Participant data loaded: {len(df)} records")
 
     # ------------------------------------------------
