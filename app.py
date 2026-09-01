@@ -129,16 +129,14 @@ if st.button("Generate Certificate"):
                 pdf.add_font("AlexBrush", "", "AlexBrush-Regular.ttf", uni=True)
 
                 pdf.ln(72)
-                pdf.set_font("AlexBrush", '', 40)
-                pdf.set_x(10)
-                pdf.set_text_color(212, 175, 55)
-                pdf.cell(0,5, txt=name.strip().title(), ln=True, align='C')
 
-                pdf.ln(1)
-                pdf.set_font("AlexBrush", size=15)
-                pdf.set_x(15)
-                pdf.set_text_color(0, 0, 0)
-                pdf.cell(0, 6, designation.strip().title(), ln=True, align='C')
+                # Combine name and designation
+                full_text = f"{name.strip().title()} - {designation.strip().title()}"
+
+                # Use a single font size for proper centering
+                pdf.set_font("AlexBrush", '', 28)
+                pdf.set_text_color(212, 175, 55)
+                pdf.cell(0, 8, txt=full_text, ln=True, align='C')
 
                 pdf.ln(1)
                 pdf.set_font("AlexBrush", size=22)
