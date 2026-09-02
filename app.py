@@ -157,3 +157,28 @@ if st.button("Generate Certificate"):
                 st.warning("⚠️ Your attendance is less than required.")
         else:
             st.error("❌ Email not found in the registration records.")
+
+# ====================== FOOTER ======================
+st.markdown("""
+<style>
+.linkedin-footer {
+    text-align: center;
+    margin-top: 50px;
+    padding: 15px 10px;
+    color: #666666;
+    font-size: 14px;
+    border-top: 1px solid #eeeeee;
+}
+.linkedin-footer a {
+    text-decoration: none;
+    font-weight: 600;
+}
+</style>
+
+<div class="linkedin-footer">
+    Developed by <strong>Raghuvaran E.</strong> |
+    <a href="https://www.linkedin.com/in/raghuvaran-e-4838b9231/" target="_blank">
+        🔗 Follow me on LinkedIn
+    </a>
+</div>
+""", unsafe_allow_html=True)
